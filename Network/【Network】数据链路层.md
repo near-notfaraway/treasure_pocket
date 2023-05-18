@@ -517,13 +517,13 @@ Underlay 网络是真正存在的网络设备，而 Overlay 网络是依托在�
 将原始的二层以太网帧，增加 8 字节 VXLAN 头部，8 字节 UDP 头部，20 字节 IP 头部和 14 字节以太网头部，共 50 字节
  
 相关术语：
-- **VTEP**
+- **VTEP（VXLan Tunnel Endpoint）**
 
-  VTEP（VXLan Tunnel Endpoint），VXLAN 使用 VTEP 设备对 VXLAN 报文进行封装与解封装，包括 ARP 请求报文和正常 VXLAN 报文，VTEP 将原始以太网帧通过VXLAN 封装后发送至对端 VTEP 设备，对端 VTEP 接收到 VXLAN 报文后解封装然后根据原始 MAC 进行转发，VTEP 可以通过物理交换机、物理服务器或者其他支持 VXLAN 的硬件设备或软件来实现
+  VXLAN 使用 VTEP 设备对 VXLAN 报文进行封装与解封装，包括 ARP 请求报文和正常 VXLAN 报文，VTEP 将原始以太网帧通过VXLAN 封装后发送至对端 VTEP 设备，对端 VTEP 接收到 VXLAN 报文后解封装然后根据原始 MAC 进行转发，VTEP 可以通过物理交换机、物理服务器或者其他支持 VXLAN 的硬件设备或软件来实现
   
-- **VNI**
+- **VNI（Virtual Network ID）**
 
-  VNI（Virtual Network ID），VNI 在 VXLAN 头部，共 24 bit ，支持 1600 万个虚拟网段，对比长度为 12 bit 的传统 VLANID 字段，有很大的扩展性
+  VNI 在 VXLAN 头部，共 24 bit ，支持 1600 万个虚拟网段，对比长度为 12 bit 的传统 VLANID 字段，有很大的扩展性
   
 - **VXLAN 网关**
 
