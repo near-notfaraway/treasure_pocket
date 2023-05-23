@@ -22,6 +22,7 @@
       * [Cookie](#cookie)
       * [Session](#session)
       * [CORS](#cors)
+      * [Proxy](#proxy)
    * [HTTP/2](#http2-1)
       * [SPDY](#spdy)
       * [Multiplexing](#multiplexing)
@@ -236,7 +237,7 @@ HTTP/1.0 中仅定义了三种请求方法，分别是 GET、POST 和 HEAD；而
 | DELETE | 请求删除指定的资源 |
 | OPTIONS | 请求指定资源的支持信息，如所支持的请求方法、请求头部等，用于资源的功能查询 |
 | TRACE | 请求回显，服务器返回收到的请求，用于服务器的测试或诊断 |
-| CONNECT | HTTP/1.1 中预留给能够将连接改为管道方式的代理服务器 |
+| CONNECT | HTTP/1.1 中预留给能够将连接改为隧道方式的代理服务器 |
 
 在实际应用中最常用的也就是 GET 请求和 POST 请求
 
@@ -437,7 +438,7 @@ Content-Type: application/octet-stream
 
 ![](media/5/16425738760594.jpg)
 
-启用了 HTTP KeepAlive 的客户端，其发送的请求携带 ` Connection: Keep-Alive` Header，告知服务端完成响应后不要关闭当前 TCP 连接，而客户端继续复用该 TCP 连接来处理下一个请求
+启用了 HTTP KeepAlive 的客户端，其发送的请求携带 `Connection: Keep-Alive` Header，告知服务端完成响应后不要关闭当前 TCP 连接，而客户端继续复用该 TCP 连接来处理下一个请求
 
 请求还可以通过携带 `Keep-Alive: max=5, timeout=120` Header 来告知服务端关于长连接的配置：
 - `max` 表示当前 TCP 连接的最大处理请求数，在非 Pipeline 连接下，非 0 的值都会被忽略
@@ -719,7 +720,31 @@ CORS 将跨域请求分为了以下三种情况：
   附带身份凭证请求需要将 JS `XMLHttpRequest` 的 `withCredentials` 标志设置为 `true`，否则浏览器不会为该请求携带对应的 Cookie 状态信息
   
   并且服务端返回的预检响应或资源响应中需要携带 `Access-Control-Allow-Credentials: true` Header，否则浏览器不会把这些响应内容返回给请求的发送方
-  
+
+### Proxy
+HTTP 代理的功能就是接收客户端的请求，转发到后端服务器，获得响应之后返回给客户端，代理可以针对不同的应用场景可以提供不同的功能，包括内容过滤、结果缓存、网络加速和增加安全性等
+
+![](media/5/16848229906829.jpg)
+
+HTTP 代理又分为 **反向代理** 和 **正向代理**，其中反向代理对客户端是透明的，代理会预先配置好目标服务端的地址，即可到达的目标服务端是固定的；而正向代理则需要客户端额外配置，并且代理从客户端获取目标服务端的地址，即可到达的目标服务端是变化的
+
+客户端配置了正向代理之后，会通过不含 Body 的 Connect 请求，在请求 URL 需填充目标服务端的地址，让代理服务器建立与目的服务端双向通信的隧道。这个请求必须明文的 HTTP 请求，即便目标服务端使用的是 HTTPS 协议
+
+客户端通过 `Proxy-Connection: Keep-Alive Header` 请求与代理服务器保持长连接，若代理服务器要求进行身份验证，则通过 `Proxy-Authorization` Header 来传递凭证
+
+```
+CONNECT server.destination.com:80 HTTP/1.1
+Host: server.proxy.com
+Proxy-Connection: Keep-Alive
+Proxy-Authorization: basic aGVsbG86d29ybGQ=
+```
+
+代理根据请求与目标服务端的连接建立好之后，会返回状态码为 200 的响应告知客户端连接已建立，之后客户端发送的请求数据都会被代理服务器直接传输到目的服务端，同时目的服务端的响应数据也会被直接返回给客户端，此时两端再使用 HTTPS 协议也不影响代理服务器的正常工作
+
+```
+ HTTP/1.0 200 Connection Established
+```
+
 ## HTTP/2
 ### SPDY
 **SPDY（Speedy）** 是位于 HTTP 和 SSL 之间的应用层协议，旨在解决 HTTP/1.1 的传输性能以及一些其他的问题，后续 HTTP/2 以 SPDY 为蓝图进行开发和完善
