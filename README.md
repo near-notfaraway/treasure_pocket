@@ -1,6 +1,9 @@
 Treasure Pocket
 ===
 
+### Python
+- [【Python】基础知识](Python/【Python】基础知识.md)
+
 ### Golang
 - [【Golang】基础知识](Golang/【Golang】基础知识.md)
 - [【Golang】编译原理](Golang/【Golang】编译原理.md)
