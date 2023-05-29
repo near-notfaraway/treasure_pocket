@@ -3,6 +3,7 @@ Treasure Pocket
 
 ### Python
 - [【Python】基础知识](Python/【Python】基础知识.md)
+- [【Python】Django](Python/【Python】Django.md)
 
 ### Golang
 - [【Golang】基础知识](Golang/【Golang】基础知识.md)
