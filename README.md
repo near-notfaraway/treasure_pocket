@@ -3,6 +3,7 @@ Treasure Pocket
 
 ### Python
 - [【Python】基础知识](Python/【Python】基础知识.md)
+- [【Python】高性能编程](Python/【Python】高性能编程.md)
 - [【Python】Django](Python/【Python】Django.md)
 - [【Python】Django 扩展](Python/【Python】Django扩展.md)
 
