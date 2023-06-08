@@ -161,8 +161,8 @@ serialized_ins = InsSerializer(ins, data=dict, partial=True)
 | SerializerMethodField | 方法字段 | 只读字段，通过所在序列化器类的 `get_<field_name>` 方法的返回来获取输出，且该方法接收的参数是序列化器类接收的对象 |
 
 决定字段输入输出的两个方法：
-- to_internal_value 用于转化原始数据为本地值，决定保存操作
-- to_representation 用于转化本地值为原始数据，决定查询操作
+- `to_internal_value` 用于转化原始数据为本地值，决定保存操作
+- `to_representation` 用于转化本地值为原始数据，决定查询操作
 
 通过字段的 `parent` 属性可以获取字段所在的序列化器对象
 
@@ -174,7 +174,7 @@ class InsSerializer(serializers.Serializer):
     # 嵌套序列化器对象
     user = UserSerializer()
 ```
-<br>
+
 序列化器还可以序列化或反序列化对象的列表，传入对象的列表或者查询集，并且通过 `many` 参数可以实现
 ``` Python
 serialized_ins = InsSerializer(queryset, many=True)
@@ -513,7 +513,7 @@ urlpatterns = [
     re_path(r'^users/$', user_list),
     re_path(r'^users/(?P<pk>[^./]+)/$', user_detail)
 ```
-<br>
+
 使用路由器进行配置，实现和上述自定义实现的结果：
 ``` Python
 # identity/urls.py
@@ -624,7 +624,6 @@ application = ProtocolTypeRouter({
 })
 ```
 > 用于 URLRouter 实例化的 websocket_urlpatterns 和 django 的 urlpatterns 格式相似，但分发路由的方式是使用嵌套的 URLRouter 而非 incloud 方法 
-<br>
 
 channels 应用安装后，django 原生的 manage.py runserver 将会被替换掉，则需要定义替换后的 manage.py runserver 所执行 application：
 ``` Python

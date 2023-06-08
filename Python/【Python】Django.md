@@ -24,16 +24,16 @@ Django 是一个 Web 应用框架，通过它可以快速构建 Web 应用，但
 
 [官方文档](https://www.djangoproject.com/start/overview/)，[中文文档](https://docs.djangoproject.com/zh-hans/3.2/)
 
-在开发测试阶段，可以使用 django 默认调用 wsgiref 库实现的 web 服务，但在生产环境中一般使用 uwsgi 来作为 web 服务
+在开发测试阶段，可以使用 Django 默认调用 wsgiref 库实现的 web 服务，但在生产环境中一般使用 uwsgi 来作为 web 服务
 
-django 的请求生命周期：
-- 接收客户端的 http 请求，并将该请求解析为请求对象
+Django 的请求生命周期：
+- 接收客户端的 HTTP 请求，并将该请求解析为请求对象
 
 - 为请求的 URL 进行路由匹配，路由匹配成功后获取到其对应视图和路由位置参数、路由关键字参数
 
 - 调用该视图，并传入请求对象、路由位置参数、路由关键字参数，得到响应对象
 
-- 解析响应对象为 http 响应，并返回给客户端
+- 解析响应对象为 HTTP 响应，并返回给客户端
 
 ## 项目创建
 ### 基础环境搭建
@@ -66,7 +66,7 @@ django-admin startproject ${project_name} ./
 Python3 manage.py startapp ${app_name}
 ```
 
-针对该项目的 django 相关设置：
+针对该项目的 Django 相关设置：
 ``` Python
 # ${project_name}/settings.py
 
@@ -168,7 +168,7 @@ app_name = 'namespace'
 
 ## 视图
 ### 请求对象
-请求对象是 django 解析请求后生成的，用于进行请求信息获取和上下文的传递
+请求对象是 Django 解析请求后生成的，用于进行请求信息获取和上下文的传递
 
 请求对象的常用属性：
 
@@ -184,7 +184,7 @@ app_name = 'namespace'
 | headers | dict | 请求的 header，是从元信息中提取的 |
 | body | bytes | 请求 body |
 
-`QueryDict` 是 django 实现的一种多值字典对象，在其内部为每个 key 对应一个值列表，获取值的方法如下:
+`QueryDict` 是 Django 实现的一种多值字典对象，在其内部为每个 key 对应一个值列表，获取值的方法如下:
 ``` Python
 # 返回 key 对应值列表的首个值
 query_dict[key]
@@ -237,7 +237,7 @@ with open(f.name, 'wb') as nf:
 ```
 
 ### 响应对象
-响应对象用于视图或中间件的返回，django 提供了多种不同功能的响应类去实例化响应对象
+响应对象用于视图或中间件的返回，Django 提供了多种不同功能的响应类去实例化响应对象
 
 常用的内容响应类：
 ``` Python
@@ -296,7 +296,7 @@ del reponse['Content-Type']
 reponse.items()
 ```
 
-django 在视图返回指定响应异常时，也会自动将其转化为 http 响应：
+Django 在视图返回指定响应异常时，也会自动将其转化为 HTTP 响应：
 ``` Python
 from django.http import Http404
 
@@ -341,7 +341,7 @@ set_signed_cookie(self, key, value, salt=''):
 `secure` 用于防止 cookie 信息在传递过程中被监听捕获
 `httponly` 使得 js 无法获取 cookie 信息，防止 XSS 攻击 信息
 
-session 是存储在服务端的客户端信息，并依赖 cookie 来认证客户端，django 通过中间件进行支持，自动完成的如下过程：
+session 是存储在服务端的客户端信息，并依赖 cookie 来认证客户端，Django 通过中间件进行支持，自动完成的如下过程：
 
 - 设置一个的 session 时
     - 随机生成 session_key
@@ -353,7 +353,7 @@ session 是存储在服务端的客户端信息，并依赖 cookie 来认证客�
     - 使用 session_key 初始化一个 session 对象，对应一条 session 记录
     - 从 session 对象中获取指定 key 的值
 
-django 提供了多种 session 存储引擎可用于设置：
+Django 提供了多种 session 存储引擎可用于设置：
 ``` Python
 # ${project_name}/settings.py
 
@@ -580,7 +580,7 @@ Python3 manage.py migrate
 ```
 迁移文件存在于应用的的 migration 包中，每次生成的文件其名字包含编号，如：`0001_initial.py`、`0002_auto_20190128_1120.py`
 
-执行迁移时需要确保数据库对 django 使用的用户有增删改查的权限
+执行迁移时需要确保数据库对 Django 使用的用户有增删改查的权限
 
 应用执行迁移的日志保存在 `django_migrations` 表中
 
@@ -648,11 +648,11 @@ models.DateTimeField()
 | unique_for_year | str | None | 是否设置和指定日期或日期时间字段的年部分建立联合唯一索引 |
 | auto_now_add | bool | False | 是否自动设置为创建时间，只用于日期或日期时间字段 |
 | auto_now | bool | False | 是否自动设置为更新时间，只用于日期或日期时间字段 |
-| blank | bool | False | 值是否允许为空值，空值包括 None、空字符串、空元祖、空列表、空字典，作用于 django 表单 |
-| choices | tuple | None | 包含所有选项的元祖，选项也是元祖 `(值, 说明)`，用于指定值的可选值，作用于 django 表单 |
-| validators | tuple | () | 进行验证时使用的验证器，验证器接受字段值，当验证失败时触发 `ValidationError` 异常，作用于 django 表单 |
+| blank | bool | False | 值是否允许为空值，空值包括 None、空字符串、空元祖、空列表、空字典，作用于 Django 表单 |
+| choices | tuple | None | 包含所有选项的元祖，选项也是元祖 `(值, 说明)`，用于指定值的可选值，作用于 Django 表单 |
+| validators | tuple | () | 进行验证时使用的验证器，验证器接受字段值，当验证失败时触发 `ValidationError` 异常，作用于 Django 表单 |
 
-若一个模型不存在主键字段，django 会自动创建名字为 `id` 的自增整数主键字段
+若一个模型不存在主键字段，Django 会自动创建名字为 `id` 的自增整数主键字段
 
 元属性 `Meta` 的属性：
 
@@ -736,7 +736,7 @@ count()
 | 字段名__day | number | 指定日，用于日期或日期时间字段 |
 | 字段名__isnull | bool | 是否为 null |
 
-查询集是惰性执行的，即生成查询集是不会带来任何数据库操作，直到访问查询集结果，django 才会对数据库执行查询
+查询集是惰性执行的，即生成查询集是不会带来任何数据库操作，直到访问查询集结果，Django 才会对数据库执行查询
 
 复杂查询：
 ``` Python
@@ -810,7 +810,7 @@ obj.delete()
 ## 中间件
 中间件用于拦截对象请求或者响应对象进行额外的处理，实现附加的功能
 
-django 的中间件就是一个包含特定方法的类，要使其起作用需要在 settings 中按顺序配置导入路径
+Django 的中间件就是一个包含特定方法的类，要使其起作用需要在 settings 中按顺序配置导入路径
 ``` Python
 # ${project_name}/settings.py
 
@@ -904,7 +904,7 @@ STATICFILES_DIRS = (
 STATIC_ROOT
 ```
 
-生产环境也想通过 django 本身来支持静态文件，则需要收集静态文件后，额外添加路由
+生产环境也想通过 Django 本身来支持静态文件，则需要收集静态文件后，额外添加路由
 
 ``` py
 # ${project_name}/url.py
@@ -915,7 +915,7 @@ urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 ```
 
 ## uwsgi 部署
-uswgi 实现了 WSGI 协议，可以为 django 的 web 应用提供 web 服务，uwsgi 拥有以下特点：
+uswgi 实现了 WSGI 协议，可以为 Django 的 web 应用提供 web 服务，uwsgi 拥有以下特点：
 - 低内存占用
 - 多 web 应用管理
 - 详细的日志功能
@@ -970,11 +970,11 @@ mule = event/mule.py
 static-map=/static=static
 ```
 
-uwsgi 不仅可以用于为 django 的 web 应用提供 web 服务，还可以作为中间件，用于提供其他 web 服务和 django 的 web 应用进行uwsgi 协议的 socket 通信
+uwsgi 不仅可以用于为 Django 的 web 应用提供 web 服务，还可以作为中间件，用于提供其他 web 服务和 Django 的 web 应用进行uwsgi 协议的 socket 通信
 
 因为 uwsgi 作为 web 服务不能支持高并发，并且静态请求的处理性能也不高，因此通常作为中间件搭配 nginx 使用
 
-nginx 直接提供静态请求的处理，而动态请求通过 uwsgi 协议转发到支持 uwsgi 服务的 socket，由 django 的 web 应用进行处理
+nginx 直接提供静态请求的处理，而动态请求通过 uwsgi 协议转发到支持 uwsgi 服务的 socket，由 Django 的 web 应用进行处理
 
 ![-w776](media/1/15675894268350.jpg)
 
