@@ -1190,12 +1190,13 @@ TCP Sockets 在发生以下事件时产生  `SIGIO` 信号：
 Unix Domain Sockets 不仅能通过 Sockets API 进行操作，而且具有更好的性能，它通过指定 `AF_UNIX` 或 `AF_LOCAL` 协议族进程创建，并且支持 `SOCK_STREAM` 和 `SOCK_DGRAM` 两种类型，不涉及指定协议
 
 UNIX Domain 地址是普通文件系统的绝对路径名，且路径名所对应的文件必须是一个与 Sockets 绑定的 `sock` 类型文件。Unix 的 Sockets 地址结构 `sockaddr_un` 如下：
-Unix Domain Sockets
+
 ``` c
 struct sockaddr_un {
 	unsigned char   sun_len;        // 地址结构长度
 	sa_family_t     sun_family;     // 协议族，值需要为 AF_UNIX，等同于 AF_LOCAL
 	char            sun_path[104];  // 绝对路径名，必须以空字符结尾
+	                                // Linux 实现中长度为 108
 };
 
 // 返回地址结构的有效长度，不计算无效的数组空间
