@@ -749,6 +749,11 @@ type structType struct {
 	Type1
 	Type2
 }
+
+// 为字段定义标签，可以被 reflect 反射进行解析和使用
+type structType struct {
+	field1 Type1   `tagKey1:"tagval1" tagKey2:"tagval2" ...`
+}
 ```
 
 结构体是值类型，其零值是所有字段值为对应字段类型零值的结构体。只要结构体的每一个字段值都是可比较的，则该结构体也是可比较的。结构体的字段名也需要以大写开头才能被导出
