@@ -10,7 +10,8 @@
       * [Gorm](#gorm)
    * [请求响应](#请求响应)
       * [Json](#json)
-      * [Validator](#validator)
+      * [Validator1](#validator1)
+      * [Validator2](#validator2)
    * [工具](#工具)
       * [UUID](#uuid)
 
@@ -306,8 +307,8 @@ func (mt MyType) UnmarshalJSON(b []byte) error {
 }
 ```
 
-### Validator
-validator 提供基于字段标签的、针对结构的各个字段的值验证，并且支持跨字段进行验证、跨结构进行验证，多维度地深度验证等功能，其安装路径为 `github.com/go-playground/validator/v10`，[官方文档](https://pkg.go.dev/github.com/go-playground/validator/v10)
+### Validator1
+validator 提供基于字段标签的、针对结构的各个字段的值验证，并且支持跨字段进行验证、跨结构进行验证，多维度深度验证、多种格式匹配等丰富功能，其安装路径为 `github.com/go-playground/validator/v10`，[官方文档](https://pkg.go.dev/github.com/go-playground/validator/v10)
 
 使用常用标签对结构进行字段验证的实例如下：
 
@@ -332,6 +333,35 @@ err := validate.Struct(MyStruct{})
 if err != nil {
     validationErrors := err.(validator.ValidationErrors)
     panic(validationErrors)
+}
+```
+
+### Validator2
+validator 提供基于字段标签的、针对结构的各个字段的值验证，特点在于格式简单的表达式，满足常用功能之余保证了代码可读性，也支持跨字段、跨结构、多维度深度验证等常用功能，其安装路径为 `github.com/bytedance/go-tagexpr/v2/validator`，[官方文档](https://github.com/bytedance/go-tagexpr/blob/master/validator/README.md)
+
+使用常用标签对结构进行字段验证的实例如下：
+
+``` go
+import "github.com/bytedance/go-tagexpr/v2/validator"
+
+type MyStruct struct {
+      // 不等于 Alice 或 (Age 为 18 时匹配指定正则)
+		Name         string   `vd:"($!='Alice'||(Age)$==18) && regexp('\\w')"`
+		// 大于 0 且小于 100
+		Age          int      `vd:"$>0&&$<100"`
+		// 满足邮箱格式
+		Email        string   `vd:"email($)"`
+		// 满足手机格式
+		Phone1       string   `vd:"phone($)"`
+		// 其中元素满足手机格式
+		OtherPhones  []string `vd:"range($, phone(#v,'CN'))"`
+}
+
+vd := validator.New("vd")
+// checkAll 为 true 表示中途错误也检查所有字段
+err := vd.Validate(MyStruct{}, checkAll)
+if err != nil {
+    panic(err)
 }
 ```
 
