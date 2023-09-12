@@ -12,7 +12,7 @@
    * [流程控制](#流程控制)
       * [循环控制](#循环控制)
       * [条件控制](#条件控制)
-   * [更多类型](#更多类型)
+   * [其他类型](#其他类型)
       * [值类型和引用类型](#值类型和引用类型)
       * [指针](#指针)
       * [结构体](#结构体)
@@ -22,6 +22,11 @@
    * [方法和接口](#方法和接口)
       * [方法](#方法)
       * [接口](#接口)
+   * [测试](#测试)
+      * [testing](#testing)
+      * [testify](#testify)
+      * [convey](#convey)
+      * [gomonkey](#gomonkey)
 
 ## 简介
 Go 是一门由 Google 支持的 **编译型的**、**静态类型的**、**强类型定义的** 开源编程语言，旨在保持一个在静态编译型语言的 **高性能** 和动态解释型语言的 **高效开发** 之间的良好平衡点。[官方网址](https://golang.google.cn)、[快速学习](https://go.dev/tour/welcome/1)、[进阶学习](https://go.dev/doc/effective_go.html)、[线上测试平台](https://play.golang.org)
@@ -663,7 +668,7 @@ switch {
 
 `fallthrough` 语句必须是代码块的最后一个语句，否则编译器编译时会报错
 
-## 更多类型
+## 其他类型
 ### 值类型和引用类型
 - **值类型（Value Types）**
     - 值类型变量所指向的内存空间直接存储着变量值
@@ -1226,5 +1231,200 @@ type interfaceType2 interface {
 type interfaceType3 interface {  
     interfaceType1
     interfaceType2
+}
+```
+
+## 测试
+### testing
+testing 包为 Go 包提供了一个自动化测试框架，可配合 `go test` 命令工具进行使用，用于编写单元测试、性能测试，甚至示例代码，以增加代码的正确性和稳定性，是 Go 标准库，[官方文档](https://pkg.go.dev/testing)
+
+单元测试的编写方式如下：
+
+``` go
+import testing
+
+// 测试函数的签名
+func TestXxx(t *testing.T) {
+    got := Xxx()
+    if got != "xxx" {
+        t.Errorf("Xxx() = %s; want xxx", got)
+    }    
+}
+```
+
+压力测试的编写方式如下：
+
+``` go
+import testing
+
+// 压测函数的签名
+func BenchmarkXxx(b *testing.B) {
+    // 初始化并重置计时
+    Init()
+    b.ResetTimer()
+    for i := 0; i < b.N; i++ {
+        xxx()
+    }
+}
+
+// 并行压测的函数
+func BenchmarkXxxParallel(b *testing.B) {
+    // 初始化并重置计时
+    Init()
+    b.ResetTimer()
+    // 并行执行
+    b.RunParallel(func(pb *testing.PB) {
+        for pb.Next() {
+            xxx()
+        }
+    })
+}
+```
+
+运行测试的命令如下：
+
+``` bash
+# 测试指定包
+# ${packages} 为 ./... 表示当前目录及子目录下的所有包
+# ${packages} 不指定则表示当前目录下的包
+go build [${flags}] [${packages}]
+
+# 常用的 flag 如下:
+# -test.count ${n}          运行 n 次测试，不使用缓存结果
+# -test.run ${name}         仅运行名字匹配 name 的测试函数
+# -cover                    统计测试的代码覆盖率
+# -html=${file}             设置 -cover 并输出代码覆盖详细结果到 file 文件
+
+# 代码覆盖详细结果显示为 html 查看
+go tool cover -html=${cover_file}
+```
+
+### testify
+testify 包基于 testing 框架提供了一系列的工具包，包括断言、Mock 等常用功能，用于简化单元测试的编写，其安装路径为 `github.com/stretchr/testify`，[官方文档](https://pkg.go.dev/github.com/stretchr/testify#section-readme)
+
+其中的 `assert` 和 `require` 包提供了断言功能，其使用实例如下：
+
+``` go
+import (
+  "testing"
+  "github.com/stretchr/testify/assert"
+  "github.com/stretchr/testify/require"
+)
+
+func TestSomething(t *testing.T) {
+    // 断言值相等和不相等
+    assert.Equal(123, 123, "they should be equal")
+    assert.NotEqual(123, 456, "they should not be equal")
+    
+    // 断言对象为空和不为空，断言成功返回 True
+    assert.Nil(object1)
+    if assert.NotNil(object2) {
+        assert.Equal("Something", object.Value)
+    }
+    
+    // require 包具有 assert 包相类似的接口
+    // 但判断失败时不是返回 false， 而是直接退出程序
+    require.Equal(123, 123, "they should be equal")
+    require.NotEqual(123, 456, "they should not be equal")
+}
+```
+
+其中的 mock 包提供了快速构建 Mock 对象的功能，其使用实例如下：
+
+``` go
+import (
+  "testing"
+  "github.com/stretchr/testify/mock"
+)
+
+type MyInterface interface {
+    DoSomething(number int) (bool, error) 
+}
+
+// 构造 mock 类型
+type MockedObject struct{
+  mock.Moc
+}
+
+func (m *MyMockedObject) DoSomething(number int) (bool, error) {
+  // 调用 mock 并获取返回参数
+  args := m.Called(number)
+  return args.Bool(0), args.Error(1)
+}
+
+// 测试函数
+func TestSomething(t *testing.T) {
+  // 创建 Mock 对象，并注册输入和输出
+  testObj := new(MyMockedObject)
+  testObj.On("DoSomething", 123).Return(true, nil)
+
+  // 调用 Mock 对象的测试代码
+  targetFuncThatDoesSomethingWithObj(testObj)
+
+  // 断言所有注册过的输入输出，都被调用过了
+  testObj.AssertExpectations(t)
+}
+```
+
+### convey
+convey 包基于 testing 框架提供了更完善的测试框架，包括 Web 界面、断言工具、高可读性输出等，可更方便地构造和编排单元测试，并且得到更人性化的输出和展示，其安装路径是 `github.com/smartystreets/goconvey`，[官方文档](https://github.com/smartystreets/goconvey/wiki)
+
+用于编写测试函数的实例如下：
+
+``` go
+import (
+	"testing"
+	"github.com/smartystreets/goconvey/convey"
+)
+
+func TestIntegerStuff(t *testing.T) {
+	convey.Convey("Given some integer with a starting value", t, func() {
+		x := 1
+		
+		Convey("When the integer is incremented", func() {
+			x++
+			
+			 // 每个子 Convey 被执行前，其父 Convey 都会被执行
+			Convey("The value should not be one", func() {
+				So(x, ShouldNotEqual, 1)
+			})
+			Convey("The value should be greater by one", func() {
+				So(x, ShouldEqual, 2)
+			})
+		})
+	})
+}
+```
+
+### gomonkey
+gomonkey 包提供了在单元测试中进行 Monkey Patch 的简单方式，针对没有基于接口设计的代码，大大简化了其单元测试的编写。其安装路径为 `github.com/agiledragon/gomonkey@v2.0.2`，[官方用例](https://github.com/agiledragon/gomonkey/tree/master/test)
+
+代码编译阶段如果启用内联，gomonkey 可能会无法 Patch 函数或方法，因此需要增加 `-gcflags=-l` 编译参数以禁止内联。并且 gomonkey 不是线程安全的，如果某个 函数或方法 同时被 Patch 和访问，则会触发 `panic`
+
+Patch 一个函数和方法的使用实例如下：
+
+``` go
+import (
+	"testing"
+	"github.com/agiledragon/gomonkey/v2"
+)
+
+func TestIntegerStuff(t *testing.T) {
+    // Patch 函数
+    patches1 := gomonkey.ApplyFunc(fake.Exec, func(_ string, _ ...string) (string, error) {
+		return outputExpect, nil
+	})
+    defer patches1.Reset()
+
+    
+    // Patch 对象的方法
+    var s *fake.Slice
+    patches2 := gomonkey.ApplyMethodFunc(s, "Add", func(_ int) error {
+        return nil
+    })
+    patches2.gomonkey.ApplyMethodFunc(s, "Remove", func(_ int) error {
+    			return fake.ErrElemNotExsit
+    		})
+    defer patches2.Reset()
 }
 ```
