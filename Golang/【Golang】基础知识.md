@@ -19,9 +19,10 @@
       * [数组](#数组)
       * [切片](#切片)
       * [映射](#映射)
-   * [方法和接口](#方法和接口)
+   * [类型抽象](#类型抽象)
       * [方法](#方法)
       * [接口](#接口)
+      * [泛型](#泛型)
    * [测试](#测试)
       * [testing](#testing)
       * [testify](#testify)
@@ -1031,7 +1032,7 @@ for key, value := range mapName {
 
 对 `map` 删除元素，其实 `map` 占有的内存没有释放，只是修改了一个标记，`map = nil` 才能真正释放内存
 
-## 方法和接口
+## 类型抽象
 ### 方法
 **方法（Method）** 只是一类能作用于特定类型的函数，这种特定类型叫做 **接收者（Receiver）**，接收者可以在方法的内部被访问，每个方法能且只能作用于一个接收者
 
@@ -1233,6 +1234,155 @@ type interfaceType3 interface {
     interfaceType2
 }
 ```
+
+### 泛型
+Go 所实现的 **泛型（Generics）**，指的是通过引入 **类型形数（Type Parameter）** 的概念，使一个函数声明或类型声明，能够处理或接收多种不同类型数据，并且不需依赖实现复杂、性能不好的空接口加反射机制
+
+**泛型类型（Generic Type）** 指使用了一个或多个类型形参进行声明的类型，而类型形参需要通过 **泛型约束（Type Constraint）** 来描述它所能接受的 **类型实参（Type Argument）**，泛型类型需要传入类型实参进行 **类型实例化（Type Instantiations）** 之后，才能像其他类型那样使用
+
+泛型类型的声明和使用方式如下：
+
+``` go
+// 声明时，K、V 是类型形参，int | string、float32 分别是其类型约束
+type MyMap[K any, V float32] map[K]V
+// 使用时，string、float32 是类型实参
+m := MyMap[string]float32{}
+
+// 声明时，可以使用其他泛型类型，但需要实例化
+type MySlice[T int | string] []MyMapp[T, float32]
+// 使用时，int 是类型实参
+s := MySlice[int]{}
+
+
+// 声明时，类型形参可以相互套用
+type WowStruct[T int | float32, S []T] struct {
+    Data     S
+    MaxValue T
+}
+// 使用时，类型实参需要符合套用关系
+s := WowStruct[int, []int]{}
+```
+
+泛型类型在声明时需要注意以下几点：
+- 目前不支持单独使用类型形参作为泛型类型，比如 `type MyT[T int] T`
+- 对于表示指针类型约束时，可以使用 `interface{}` 来包住类型约束来避免歧义，比如 `type myT[interface{*int}] []T`
+- 当类型实参和泛型类型的底层类型不匹配时，会出现编译错误，比如 `type MyT[T int] string`
+- 匿名结构体不支持声明为泛型类型
+
+泛型类型作为接收器的方法，以及泛型函数的声明和使用方式如下：
+
+``` go
+type MySlice[T int | float32] []T
+
+// 声明时，若泛型类型作为接收器，则针对其中的泛型形参
+// 方法的接收参数和响应可以使用泛型形参，方法内容也可以使用泛型形参
+func (s MySlice[T]) Sum(v T) T {
+    var sum T
+    for _, value := range s {
+        sum += value
+    }
+    return sum + v
+}
+
+// 使用时，只需要注意和泛型实参对应即可
+s := MySlice[int]{}
+s.Sum(123)
+
+// 泛型函数，声明时类似泛型类型，可使用了一个或多个类型形参
+// 然后接收参数和响应可以使用泛型形参，方法内容也可以使用泛型形参
+func Add[T int | float32 | float64](a T, b T) T {
+    return a + b
+}
+// 使用时，函数也需要实例化
+Add[float32](1.0, 2.0)
+```
+
+泛型接收器的方法和泛型函数在声明时需要注意以下几点：
+- 泛型类型定义的变量不能使用类型断言，因此若需要区分类型处理，需要思考是否适合使用泛型
+- 匿名函数不支持声明为泛型函数
+- 不支持泛型方法，即不支持为声明方法时，像泛型函数那样使用泛型形参
+
+为了适配泛型，接口的概念从原来的方法集扩展为类型集，区分为 **基本接口(Basic Interface)** 和 **一般接口(General Interface)**，代表类型集的接口可以用作类型约束，若类型实参能够实现接口则表示满足类型约束，其所支持的行声明方法如下：
+
+``` go
+// 接口可组合多种类型
+// 符号 | 表示类型的并集
+type Int interface {
+    int | int8 | int16 | int32 | int64
+}
+
+// 接口也可组合其他接口
+type SliceElement interface {
+    Int  | string
+}
+
+// 而多行定义的方式，则表示类型的交集
+type SliceElement interface {
+    Int
+    int32    
+}
+
+// 表示空集的接口，即没有任何一种类型属于该接口
+type SliceElement interface {
+    Int
+    string    
+}
+
+// 符号 ~ 表示底层类型，即底层类型相同就满足实现
+// 若没有这个符号，则别名类型不可以满足实现
+// ~ 后面的类型不能为接口且必须为基本类型
+type Float interface {
+    ~float64 | ~float32
+}
+```
+
+原来的基础接口表示方法集，实现了所有方法就实现了接口，而扩展的一般接口表示类型集，则可以看作实现了所有方法的类型，都被包含在了接口中。因此接口实现存在新的定义：
+
+``` go
+// 若存在 类型 T 和 接口 I，满足以下任一条件：
+// - 若 T 不是接口，类型 T 是接口 I 代表的类型集中的一个成员
+// - 若 T 是接口，接口 T 代表的类型集是接口 I 代表的类型集的子集
+// 则类型 T 实现了接口 I 
+
+// 由定义便可理解，一般接口同时组合类型和方法的意义
+// 一个类型如果要实现该接口，既要满足以上类型，又要实现以上的方法
+type ReadWriter interface {
+    ～string ｜ ～[]byte
+    Read(p []byte) (n int, err error)
+    Write(p []byte) (n int, err error)
+}
+
+// Go 新提供了两个内置接口供用于类型约束
+// - any，等同于 interface{}，任何类型都满足约束
+// - comparable，支持 == 和 != 操作的类型都满足约束
+```
+
+接口也支持泛型，而泛型接口的声明和使用方式如下：
+
+``` go
+// 声明时类似泛型类型，可使用了一个或多个类型形参
+// 然后其中的类型和方法都可以使用泛型形参
+type DataProcessor[T any] interface {
+    ~[]T
+    Process(oriData T) (newData T)
+    Save(data T) error
+}
+
+// CSVProcessor 实现了通过 []byte 实例化的 DataProcessor
+type type CSVProcessor []byte
+func (c CSVProcessor) Process(oriData []byte) (newData []byte) {}
+func (c CSVProcessor) Save(oriData []byte) error {}
+
+// 因此使用时，先进行实例化即可
+var processor DataProcessor[string] = CSVProcessor{}  
+```
+
+接口声明需要注意以下几点：
+- 用 `|` 连接为类型并集时，非接口成员之间不能存在交集
+- 类型并集成员多于一个时，不能并入 `comparable` 接口
+- 类型并集成员多于一个时，不能并入带方法的接口
+- 接口中不能直接内嵌类型形参
+- 接口中不能直接或间接内嵌自身，即出现循环嵌套
 
 ## 测试
 ### testing
