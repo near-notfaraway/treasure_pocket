@@ -37,6 +37,7 @@ Treasure Pocket
 
 ### Linux
 - [【Linux】网络管理](Linux/【Linux】网络管理.md)
+- [【Linux】内核原理](Linux/【Linux】内核原理.md)
 
 ### SystemDesign
 - [【SystemDesign】分布式](SystemDesign/【SystemDesign】分布式.md)
