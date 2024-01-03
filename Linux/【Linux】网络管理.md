@@ -749,6 +749,13 @@ tcpdump -i bond0  port 4789 and udp[50:2]=0x1f90 -nn
 tcpdump -i bond0  port 4789 and udp[52:2]=0x1f90 -nn
 ```
 
+使用 `WireShark` 应用能够可视化地分析抓包结果，抓包结果通过 `tcpdump` 命令输出到后缀为 `.pcap` 文件中
+
+通过 Lua 实现自定义的协议分析脚本，可以对私有协议进行解析，脚本编写的参考文档有 [Wireshark API 文档](https://www.wireshark.org/docs/wsdg_html_chunked/lua_module_Proto.html)、
+[Wireshark 协议解析示例](https://mika-s.github.io/wireshark/lua/dissector/2017/11/04/creating-a-wireshark-dissector-in-lua-1.html)
+
+打开 `WireShark` 应用，将 Lua 脚本放入 `About` 菜单显示的 `Global Lua Plugins` 或 `Personal Lua Plugins` 目录中，然后通过 `Analyze/Decode As` 菜单设置使用私有协议脚本进行解析的条件，然后重新打开 `WireShark` 应用即可
+
 ### 可达探测
 使用 `arping` 命令可用于二层网络内的 IP 地址和 MAC 地址之间的映射关系查询，从而探测指定主机的二层网络存活性
 

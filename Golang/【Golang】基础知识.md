@@ -1549,7 +1549,7 @@ func TestIntegerStuff(t *testing.T) {
 ### gomonkey
 gomonkey 包提供了在单元测试中进行 Monkey Patch 的简单方式，针对没有基于接口设计的代码，大大简化了其单元测试的编写。其安装路径为 `github.com/agiledragon/gomonkey@v2.0.2`，[官方用例](https://github.com/agiledragon/gomonkey/tree/master/test)
 
-代码编译阶段如果启用内联，gomonkey 可能会无法 Patch 函数或方法，因此需要增加 `-gcflags=-l` 编译参数以禁止内联。并且 gomonkey 不是线程安全的，如果某个 函数或方法 同时被 Patch 和访问，则会触发 `panic`
+代码编译阶段如果启用内联，gomonkey 可能会无法 Patch 函数或方法，因此需要增加 `-gcflags=all=-l` 编译参数以禁止内联。并且 gomonkey 不是线程安全的，如果某个 函数或方法 同时被 Patch 和访问，则会触发 `panic`
 
 Patch 一个函数和方法的使用实例如下：
 
