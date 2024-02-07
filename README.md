@@ -45,3 +45,7 @@ Treasure Pocket
 
 ### Frontend
 - [【Frontend】Vue2](Frontend/【Frontend】Vue2.md)
+
+### AI
+- [【AI】机器学习](AI/【AI】机器学习.md)
+- [【AI】LLM](AI/【AI】LLM.md)
