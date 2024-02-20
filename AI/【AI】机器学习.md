@@ -1252,7 +1252,7 @@ $$p(x)\begin{cases}>\epsilon & 正常\\
 #### 基于高斯分布
 **高斯分布（Gaussian distribution）** 又称为 **正态分布（Normal distribution）**，假设训练集中的正常样本 $x$ 服从高斯分布，记为：
 
-$$x\text{~}N(\mu,\sigma^2)$$
+$$x\text{～}N(\mu,\sigma^2)$$
 > $\mu$ 表示均值，$\mu=\frac{1}{m}\sum^m_{i=1}x^{(i)}$
 > $\sigma^2$ 是方差，$\sigma^2=\frac{1}{m}\sum^m_{i=1}(x^{(i)}-\mu)^2$，$\sigma$ 是标准差
 
@@ -1262,7 +1262,7 @@ $$p(x;\mu,\sigma^2)=\frac{1}{\sqrt{2\pi\sigma}}exp(-\frac{(x-\mu)^2}{2\sigma^2})
 
 ![](media/15711360433468.jpg)
 
-若 $x\text{~}N(\mu,\sigma^2)$，则 $x$ 的每个特征 $x_1,\dots,x_n$ 都服从高斯分布 $x_n\text{~}N(\mu_n,\sigma_n^2)$
+若 $x\text{～}N(\mu,\sigma^2)$，则 $x$ 的每个特征 $x_1,\dots,x_n$ 都服从高斯分布 $x_n\text{～}N(\mu_n,\sigma_n^2)$
 
 $$\begin{array}p(x;\mu,\sigma^2)&=p(x_1;\mu_1,\sigma_1^2)p(x_2;\mu_2,\sigma_2^2)\dots p(x_n;\mu_n,\sigma_n^2)\\
 &=\prod^n_{j=1}p(x_j;\mu_j,\sigma_j^2)\end{array}$$ 
@@ -1405,7 +1405,7 @@ $$F_1 = 2\frac{PR}{P+R}$$
 
 一般来说，将样本集划分为三个部分：
 - 训练集，用于训练模型，得到多个模型
-- 验证集，用于评估模型，进而选出最优的模型和对应超参数
+- 验证集，用于评估模型，进而选出最优模型和搜索最佳超参数
 - 测试集，用于评估模型，进而量化最优模型的性能度量
 
 > 根据选用的指标，训练模型是最小化拟合误差，评估模型是计算泛化误差
