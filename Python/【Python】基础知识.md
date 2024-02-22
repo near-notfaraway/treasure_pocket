@@ -688,6 +688,31 @@ BinaryIO
 
 # 定义类型别名
 Squeue = Union[str, list, tuple]
+
+# 使用泛型进行函数定义
+```
+
+在 Python 3.12 后，可以使用类型参数来表示泛型函数和泛型类，并且类型参数可被约束的：
+``` py
+def first[T](l: List[T]) -> T:
+    return l[0]
+
+# 具有限制时至少要两个类型以上，否则等同于 type 定义
+class MyClass[T: Optional[str, int]]:
+    def __init__(v: T):
+        pass
+
+# 通过 TypeVar 直接声明类型参数
+from typing import TypeVar
+U = TypeVar('U')
+def first(l: List[U]) -> U:
+    return l[0]
+
+# 具有限制时至少要两个类型以上
+U = TypeVar('U', str, int)
+class MyClass:
+    def __init__(v: U):
+        pass
 ```
 
 通过函数、方法的 `__annotations__` 属性，可以查询到其类型提示的内容
