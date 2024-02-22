@@ -41,7 +41,7 @@ LLM 可以根据当前的对话上下文来调整自己的参数和预测，这�
 
 **幻觉（Hallucinations）** 是指在 LLM 有时会出现不合理或不真实的结果。对于更复杂的进阶问题，采用更多的 Prompt 技巧能更好地引导模型，而 **More Context，More Accuracy** 就是最常见的 Prompt 技巧，即提供越多上下文，模型预测会越准确
 
-增加和强化 Context 信息能更好地发掘模型的 ICL 潜力，这种方式是想把 LLM 当做一个模仿机器人，在 Prompt 中给足信息后，使其模仿人类解决问题的方式或者得到事实性的信息。为 Prompt 增加和强化 Context 的技巧如下：
+增加和强化 Context 信息能更好地发掘模型的 ICL 潜力，这种方式是想把 LLM 当做一个模仿机器人，在 Prompt 中给足信息后，使其模仿人类解决问题的方式或者得到事实性的信息。参考 [Prompting Techniques](https://www.promptingguide.ai/techniques) ，为 Prompt 增加和强化 Context 的主要技巧如下：
 - **Few-Shot**：即增加一些案例，是一个特别能提高 LLM 回答准确性的方法，相对应没有提供案例时也被称为 **0-Shot**
 - **Few-Shot COT**：COT 全称 **思维链（Chain Of Thought）**，即在 Few-Shot 的基础上，为案例补充解答的过程，包括列出已知条件，做出假设并一步一步进行推导，使 LLM 的回答也带有思考的中间过程
 - **0-Shot COT**：在没有提供案例的情况下，通过补充一句 `Think it step by step`，让 LLM 不再凭直觉回答，同样会一步一步地推导，带有思考的过程
@@ -163,6 +163,33 @@ Agent 不仅可以基于固定的流水线，还可以由 LLM 驱动进行自动
 
 ### Langchain
 **Langchain** 是一个用于开发 LLM 应用的框架，使应用能够为 LLM 提供上下文来源，以及使用 LLM 进行推断，[官方文档](https://python.langchain.com/docs/get_started/introduction)
+
+Langchain 通过 **Chains** 来构建应用的运行流程，**Chains** 指一连串实现了 `Runnable` 接口的可调用组件，包括 LLM 使用 、工具使用或者数据处理等组件，这些可调用组件被称为 **Chain**，每个 Chain 都定义好了输入和输出的格式
+
+**LCEL（LangChain Expression Language）** 能简便地将各个 Chain 组合起来，其主要特点有支持流传输、异步处理和并行处理，便于重试、错误处理和查看中间结果，并可以通过 **LangSmith** 进行完整追踪
+
+为了更灵活地构建 Chains，Langchain 还提供了许多名为 `RunnableXXX` 的 Chain，从而实现参数传递、参数合并、函数运行、分支选择、错误处理等能力，[使用文档](https://python.langchain.com/docs/expression_language/how_to/)
+
+Langchain 的主要模块如下，其中包含一些最基本的 Chain：
+- **Model I/O**：
+
+  提供各种 LLM 模型的使用封装，根据底层 LLM 模型的 API 类型，这些封装被划分为了 LLMs 和 Chat Models 两种，分别具有不同的输入和输出。比如 OpenAI 的 `gpt-4-turbo-preview` 需通过 Chat Models 来使用，而其 `gpt-3.5-turbo-instruct` 模型需通过 LLM 来使用
+  
+  LLMs 的输入和输出都是字符串，[LLMs 使用文档](https://python.langchain.com/docs/integrations/llms/)；而 Chat Models 的输入为消息列表，输出为单个消息，其中每个消息指包含了角色和内容属性，[Chat Models 使用文档](https://python.langchain.com/docs/integrations/chat/)
+  
+  还提供了模型使用过程中涉及的工具，包括多种类型的提示词模版 Prompt Templates、代表各种角色的消息 Messages、处理模型输出结果的解析器 Output Parsers
+
+- **Retrieval**
+
+  提供用于实现 RAG 的多种类型的检索器 Retrievers，不同类型的检索器具有不同的使用场景，其主要区别在于是否基于向量数据库或文档数据库进行索引、是否使用 LLM 模型等
+  
+  还提供了检索涉及的相关工具，包括文档读取器 Document Loaders、文本切割工具 Text Splitters、文本嵌入模型的使用封装 Text Embedding Models、向量数据库的使用封装 Vector Stores
+
+- **Agents**
+
+  提供具有不同类型的代理 Agents，这些代理能通过不同的提示词风格、输入格式化和输出解析方式，从而实现不同的机制，使用 LLM 来选择即将采取的一系列行动
+
+  Agent 的输入是之前已执行的动作及对应输出，而输出是后续的一系列动作或者结束，需要通过 AgentExecutor 进行执行，其作用是不断从 Agent 中获取最新的一系列动作并执行，直到 Agent 返回结束
 
 ## 文章参考
 - [ChatGPT 在做什么](https://waytoagi.feishu.cn/wiki/LnMOwmKIwihcRakRalcczNgrnjf)
