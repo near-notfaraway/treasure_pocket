@@ -813,15 +813,14 @@ from package import *
 
 新增包和模块的搜索目录：
 - 通过修改 `sys.path`
-
-  ``` py
-  import sys
+``` py
+import sys
 sys.path.append(new_dir)
-  ```
+```
 - 通过修改 `PythonPATH` 环境变量
- ``` bash
+``` bash
 export PythonPATH=${PythonPATH}:new_dir
- ```
+```
 - 通过增加 `.pth` 文件到 `site-packages` 第三方库中，一行一个目录路径
 
 包和模块的执行本质：

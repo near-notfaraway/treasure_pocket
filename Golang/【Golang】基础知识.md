@@ -1578,3 +1578,41 @@ func TestIntegerStuff(t *testing.T) {
     defer patches2.Reset()
 }
 ```
+
+### go-sqlmock
+go-sqlmock 包提供了能够模拟任何 SQL 驱动行为的 Mock 库，其实现了数据库驱动 `sql/driver` 的接口，用于在不连接实际数据库的情况下进行单元测试
+
+使用 go-sqlmock 进行需要向数据库提交 SQL 的相关测试：
+``` go
+import (
+	"fmt"
+	"testing"
+	"github.com/DATA-DOG/go-sqlmock"
+)
+
+func TestShouldUpdateStats(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+   // 定义期望的 SQL 行为
+	mock.ExpectBegin()
+	mock.ExpectExec("UPDATE products").WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectExec("INSERT INTO product_viewers").WithArgs(2, 3).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	// 利用 Mock 执行 SQL
+	if err = recordStats(db, 2, 3); err != nil {
+		t.Errorf("error was not expected while updating stats: %s", err)
+	}
+
+	// 确保所有期望已经满足
+	if err := mock.ExpectationsWereMet(); err != nil {
+		t.Errorf("there were unfulfilled expectations: %s", err)
+	}
+}
+```
+
+
