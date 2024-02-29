@@ -16,6 +16,7 @@ Treasure Pocket
 
 ### Java
 - [【Java】基础知识](Java/【Java】基础知识.md)
+- [【Java】数据类型](Java/【Java】数据类型.md)
 
 ### C
 - [【C】基础知识](C/【C】基础知识.md)
