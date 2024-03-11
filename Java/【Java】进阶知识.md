@@ -16,6 +16,8 @@
 * [动态代理](#动态代理)
 	* [内置动态代理](#内置动态代理)
 	* [CGLib 动态代理](#CGLib-动态代理)
+* [并发编程](#并发编程)
+    * [线程](#线程)
 
 ## 泛型
 **泛型（Generics）** 是 JDK 5 中引入的新特性，其本质是参数化类型，也就是将所操作的数据类型指定为一个参数，作用是在编译时提供了类型安全检测机制
@@ -739,5 +741,137 @@ TargetInterface dynamicProxy = (TargetInterface) DynamicProxy().bind(targetObjec
 dynamicProxy.method()
 ```
 
+## 并发编程
+关于 Java 并发编程，一般指的是多线程编程，很少提及多进程编程或多协程编程， Java 通过 `java.util.concurrent`  内置包提供了一系列用于支持多线程的接口，[Java 8 官方文档](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/package-summary.html)
 
+选择使用 Java 多线程来实现并发时，JVM 中每个 Java 线程都基于操作系统的原生线程，并通过操作系统的调度机制来并发执行，不仅开销小且内置支持好
+
+很少选择开销较大的 Java 多进程，因为需要创建多个 JVM 实例；选择 Java 多协程理论上开销更小，但由于 Java 对协程的内置支持不足，因此也很少选择
+
+### 线程
+一个 Java 线程的生命周期和对应状态转换：
+
+![](media/16249494373790.jpg)
+
+- **新建状态**：线程从新建状态开始了它的生命周期，并保持该状态直到该线程的 `start()` 方法被调用 
+
+- **就绪状态**：当新建状态的线程的 `start()` 方法被调用后，或阻塞状态的线程结束其阻塞操作后，会转换为就绪状态，开始等待操作系统调度，来获取 CPU 资源
+
+- **运行状态**：当就绪状态的线程因操作系统调度获取到 CPU 资源，会转换为运行状态，继续执行其 `run()` 方法
+
+- **阻塞状态**：当运行状态的线程执行阻塞操作，会转换为阻塞状态，并释放它的 CPU 资源，直到阻塞操作结束
+
+- **终止状态**：当运行状态的线程执行完其 `run()` 方法，或其他终止条件发生，会转换为终止状态，结束该线程的生命周期
+
+> 在一个 JVM 实例中，Java 主线程新建于程序的 `main()` 方法，在主线程中可以新建和运行其他线程
+
+创建 Java 线程可以通过以下两种方法：
+
+- **继承 `Thread` 类**
+
+``` java
+class MyThread extends Thread {
+
+    @Override
+    public void run() {
+        // 代码逻辑
+    }
+}
+
+t = new MyThread()
+```
+
+- **实现 `Runnable` 接口**
+
+  `Runnable` 接口只包含一个方法签名 `public abstract void run();`，`Thread` 类也实现了该接口
+  
+``` java
+class MyRunnable implements Runnable{
+
+    @Override
+    public void run() {
+        // 代码逻辑
+    }
+}
+
+t = new Thread(new MyRunnable())
+
+// 由于 Runnable 接口是函数式接口，可以通过匿名函数快速实现并实例化
+// 因此以上过程可简化为
+
+t = new Thread(() -> {
+    // 代码逻辑
+})
+```
+
+`Thread` 常用的类方法：
+``` java
+// 返回对当前正在执行的线程对象
+Thread currentThread();
+
+// 使当前正在执行的线程暂停执行指定毫秒
+// millis 表示毫秒数
+// 具体精度取决于操作系统的定时器和调度器
+void sleep(long millis);
+
+// 使当前线程放弃目前的 CPU 资源，转换为就绪状态等待调度
+void yield();
+```
+
+`Thread` 常用的成员方法
+``` java
+// 启动该线程
+void start();
+
+// 返回该线程的标识符
+long getId();
+
+// 返回该线程的名字
+String getName();
+
+// 设置该线程的名字
+void setName(String name);
+
+// 返回该线程是否为存活的
+// 存活表示就绪状态、运行状态或阻塞状态
+boolean isAlive();
+
+// 为该线程设置中断标记，用于线程中断运行
+void interrupt();
+
+// 返回该线程是否已存在中断标记
+boolean isInterrupted();
+
+// 返回该线程是否已存在中断标记，可选择是否清除标记
+boolean isInterrupted(boolean ClearInterrupted);
+
+// 返回线程是否为守护线程
+boolean isDaemon();
+
+// 设置线程是否为守护线程
+void setDaemon(boolean on);
+
+// 等待直到该线程结束或超时
+// millis 表示超时毫秒数
+void join(long millis);
+
+// 返回该线程的优先级
+int getPriority();
+
+// 设置该线程的优先级
+void setPriority(int newPriority);
+```
+
+线程的分类：
+- **用户线程**：运行在前台，用于独立执行具体的任务
+- **守护线程**：Daemon 线程，运行在后台，用于为其他前台线程服务，因此当所有用户线程都运行结束，JVM 会结束所有守护线程
+
+> 常见的守护线程：垃圾回收线程、数据库连接检测线程
+> 
+> 设置守护线程必须在线程启动之前，否则会抛出 `IllegalThreadStateException` 异常
+
+线程的优先级用于设置操作系统针对某个线程的调度优先程度，优先级有以下几个特性：
+- **继承性**，比如 A 线程启动 B 线程，则 B 线程的优先级与 A 是一样的
+- **规则性**，线程的调度优先程度跟其启动先后顺序无关，与其优先级大小有关
+- **随机性**，操作系统尽量会先调度优先级较高的线程，但无法百分百肯定线程优先级较高一定比线程优先级较低的先执行完
 
