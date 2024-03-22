@@ -465,18 +465,18 @@ lib/*
 修改样例：
 ``` ini
 [core]
-    sshCommand = "ssh -i ~/ssh_key/zhanghuaming_private.key"
+    sshCommand = "ssh -i ~/ssh_key/my_private.key"
 ```
 
 ### 批量修改提交
 定义脚本：
 ``` bash
 #!/bin/sh
-
+my
 git filter-branch --env-filter '
 
 # 之前的邮箱
-OLD_EMAIL="zhanghuaming@bytedance.com"
+OLD_EMAIL="my@bytedance.com"
 # 修改后的用户名
 CORRECT_NAME="near-notfaraway"
 # 修改后的邮箱
