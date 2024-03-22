@@ -631,7 +631,7 @@ Linux 中虽然父进程无法直接获取所有子进程的 PID，但允许获�
   // status 用于保存被收集子进程退出时的状态，如退出代码、信号等
   // options 可包含 WNOHANG 和 WUNTRACED 两个选项，使用 | 运算符连接
   pid_t waitpid(pid_t pid, int *status, int options)
-```
+  ```
 
   作用和 `wait()` 完全相同，只是多了两个可传入的参数 `pid` 和 `options`，使得功能更加强大
 

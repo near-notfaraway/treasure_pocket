@@ -24,6 +24,7 @@ Treasure Pocket
 ### C
 - [【C】基础知识](C/【C】基础知识.md)
 - [【C】Sockets 编程](C/【C】Sockets编程.md)
+- [【C】Unix 编程](C/【C】Unix编程.md)
 
 ### Network
 - [【Network】概述](Network/【Network】概述.md)
