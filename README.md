@@ -62,6 +62,7 @@ Treasure Pocket
 - [【Devops】Git](Devops/【Devops】Git.md)
 
 ### Mysql
+- [【Mysql】SQL 操作](Mysql/【Mysql】SQL操作.md)
 - [【Mysql】数据库原理](Mysql/【Mysql】数据库原理.md)
 - [【Mysql】索引知识](Mysql/【Mysql】索引知识.md)
 - [【Mysql】数据备份](Mysql/【Mysql】数据备份.md)
