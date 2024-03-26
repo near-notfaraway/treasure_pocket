@@ -55,6 +55,7 @@
          * [unittest](#unittest)
          * [pytest](#pytest)
          * [doctest](#doctest)
+   * [常用模块](#常用模块)
 
 ## 简介
 Python 是一门以 **优雅、明确、简单** 为设计哲学的编程语言
@@ -2969,3 +2970,30 @@ suite.addTest(TestStringMethods('test_split'))
 
 #### doctest
 通过使用 Python 交互式代码的文本，然后执行这些代码来对程序的功能进行验证，[官方文档](https://docs.Python.org/zh-cn/3/library/doctest.html)
+
+## 常用模块
+- **标准库（Standard Library）** 
+
+  指 Python 官方模块，其内容非常庞大，所提供的组件涉及范围十分广泛，提供了日常编程中许多问题的标准解决方案。[官方文档](https://docs.python.org/zh-cn/3/library/)
+  
+- **Flask** 
+
+  是一个 **Web 应用框架**，通过它可以快速构建 Web 应用，相比于 Django 它更加轻量，没有内置过多的额外功能，但它不包括高性能的 Web 服务。[官方文档](https://flask.palletsprojects.com/en/2.0.x/)，[中文文档](https://dormousehole.readthedocs.io/en/latest/)
+
+- **Celery** 
+
+  是一个灵活且可靠的 **分布式任务队列**，它通过消息机制可以处理大量的任务，在着重于任务实时处理的基础上，也支持任务调度。[官方文档](https://docs.celeryproject.org/en/stable/index.html)，[中文文档](https://www.celerycn.io/ru-men/celery-jian-jie)
+
+- **APScheduler** 
+
+  是一个 **提供简单任务调度** 的第三方库，支持基于多种存储方式（Mysql、Kafka 等）和通用框架（Asyncio、Gevent 等）来实现，并能作为第三方模块集成到常见 Web 框架（Django、Flask）中，[官方文档](https://apscheduler.readthedocs.io/en/stable/)
+
+- **PyMysql** 
+
+  提供使用原生 SQL 语句的操作 MySql 数据库的 API，取代了在 python2 中同样功能的 mysqldb。[官方网站](https://pymysql.readthedocs.io/en/latest/modules/connections.html)
+
+- **SqlAlchemy** 
+
+  是一个 Python 的 ORM（Object Relation Mapping）对象映射关系框架，其封装了原生的 SQL 语句，提供 Python 类和数据库的表之间的关联，以及类的对象和表的记录之间的关联，使用户可以面向对象地访问数据库。[官方文档](http://docs.sqlalchemy.org/en/latest/orm/tutorial.html)
+
+  它包含一个透明地同步对象及其相关记录之间的所有状态更改的系统（称为工作单元），以及一个根据用户定义的类及其相互之间定义的关系来表示数据库查询的系统，其中用于实际操作数据库的 DB API 又称为 driver，实际连接数据库的模块，如 pymysql、mysqldb 等
